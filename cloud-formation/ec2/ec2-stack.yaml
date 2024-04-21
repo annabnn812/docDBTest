@@ -1,0 +1,50 @@
+---
+
+Parameters:
+  AvailabilityZone:
+    Type: String
+    Default: us-east-1c
+  AmazonLinuxAMI:
+    Type: String
+    Default: ami-022e1a32d3f742bd8
+
+Resources:
+
+  EC2DocumentDbClientInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Ref AvailabilityZone
+      ImageId: !Ref AmazonLinuxAMI
+      InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: DocumentDb Test Client
+      UserData: 
+        Fn::Base64:
+          | 
+          #!/bin/bash
+          yum update -y
+
+          # Install dependencies
+          yum install git -y
+          yum install nodejs -y
+
+          # Create setup file
+          echo "git clone https://github.com/kobbikobb/simple-mongo-app" > /home/ec2-user/setup.sh
+          echo "cd simple-mongo-app" >> /home/ec2-user/setup.sh
+          echo "npm install" >> /home/ec2-user/setup.sh
+          chmod +x /home/ec2-user/setup.sh
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: ec2.ssh.security.group
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0 # Allow all connections for this test
+          
