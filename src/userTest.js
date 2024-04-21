@@ -21,10 +21,14 @@ const verifyUserExistsInUsers = async (user) => {
 
 export const testCreateAndReadUsers = async () => {
   const newUser = {
-    id: 123,
-    name: "New User",
-    email: "newuser@email.com",
-    active: true,
+    'User': "Test User",
+    'Password': "A111111",
+    'R/W': true,
+    'Can Sign': true,
+    'Can Delete': true,
+    'Location1': "Something longer than 40 characters long  and more to come.",
+    'Location': "Something less than 40 char.",
+    
   };
 
   await createAndVerifyUser(newUser);
